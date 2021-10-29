@@ -3,13 +3,13 @@
     <section>
       <div class="input-search">
         <b-field label="Name" horizontal>
-          <b-input v-model="name"></b-input>
+          <b-input v-model="param.name"></b-input>
         </b-field>
         <b-field label="Age" horizontal>
-          <b-input v-model="age"></b-input>
+          <b-input v-model="param.age"></b-input>
         </b-field>
         <b-field label="Sex" horizontal>
-          <b-input v-model="sex"></b-input>
+          <b-input v-model="param.sex"></b-input>
         </b-field>
       </div>
       <div class="float-right">
@@ -19,28 +19,21 @@
   </div>
 </template>
 
-<script>
-import Vue from "vue";
-
-export default Vue.extend({
-  data() {
-    return {
-      name: null,
-      age: null,
-      sex: null
-    };
-  },
-  methods: {
-    search() {
-      const param = {
-        name: this.name,
-        age: this.age,
-        sex: this.sex
-      };
-      this.$emit("search", param);
-    }
+<script lang="ts">
+// import Vue from "vue";
+import { Component, Vue, Prop } from "vue-property-decorator";
+import { SearchUser } from "@/model/SearchUser";
+@Component
+export default class UserSearchForm extends Vue {
+  param: SearchUser = {
+    name: '',
+    age: '',
+    sex: ''
   }
-});
+  search() {
+    this.$emit("search", this.param);
+  }
+};
 </script>
 
 <style scoped>

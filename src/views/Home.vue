@@ -19,90 +19,85 @@
       aria-previous-label="Previous page"
       aria-page-label="Page"
       aria-current-label="Current page">
-  </b-pagination>
+    </b-pagination>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import titanic from "@/assets/titanic.json";
+import { User } from "../model/User";
+import { Pagination } from "../model/Pagination";
+import { SearchUser } from "../model/SearchUser";
 import UserSearchForm from "@/components/parts/UserSearchForm.vue";
+import { Component, Vue } from "vue-property-decorator";
 
-export default Vue.extend({
-  components: { UserSearchForm },
-  name: "Home",
-  data() {
-    return {
-      users: [{}],
-      tempUsers: titanic,
-      pagination: {
-        total: 0,
-        current: 1,
-        perPage: 20,
-        rangeBefore: 3,
-        rangeAfter: 1,
-        order: "",
-        size: "",
-        isSimple: false,
-        isRounded: false,
-        prevIcon: "chevron-left",
-        nextIcon: "chevron-right"
-      },
-      paramSearch: {
-        name: "",
-        age: null,
-        sex: null
-      },
-      columns: [
-        {
-          field: "name",
-          label: "Name"
-        },
-        {
-          field: "sex",
-          label: "Sex"
-        },
-        {
-          field: "age",
-          label: "Age"
-        }
-      ]
-    };
-  },
-  methods: {
-    handlerPagination (current: number) {
-      this.pagination.current = current;
-      this.searchUser(this.paramSearch);
+@Component({
+  components: { UserSearchForm }
+})
+export default class Home extends Vue {
+  users: User[] = [];
+  pagination: Pagination = {
+    total: 0,
+    current: 1,
+    perPage: 20,
+    rangeBefore: 3,
+    rangeAfter: 1,
+    order: "",
+    size: "",
+    isSimple: false,
+    isRounded: false,
+    prevIcon: "chevron-left",
+    nextIcon: "chevron-right"
+  };
+  paramSearch: SearchUser = {
+    name: "",
+    age: "",
+    sex: ""
+  };
+  columns = [
+    {
+      field: "name",
+      label: "Name"
     },
-    searchUser (param: {}) {
-      Object.assign(this.paramSearch, param);
-      if (Object.values(param).length > 0) {
-        this.tempUsers = [];
-        titanic.filter((user, index) => {
-          let isMatch = false;
-          if (this.paramSearch.name) {
-            isMatch = user.name.toLowerCase().includes(this.paramSearch.name.toLowerCase());
-          }
-          if (this.paramSearch.age) {
-            isMatch = this.paramSearch.name ? (isMatch && user.age == this.paramSearch.age) : user.age == this.paramSearch.age;
-          }
-          if (this.paramSearch.sex) {
-            isMatch = (this.paramSearch.name || this.paramSearch.age) ? (isMatch && user.sex == this.paramSearch.sex) : user.sex == this.paramSearch.sex;
-          }
-          if (isMatch) {
-            this.tempUsers.push(user);
-          }
-          if(index + 1 === titanic.length) {
-            this.pagination.total = this.tempUsers.length;
-            if (this.pagination.total > this.pagination.perPage) {
-              this.users = this.tempUsers.splice((this.pagination.current - 1) * this.pagination.perPage,  this.pagination.perPage * this.pagination.current);
-            } else {
-              this.users = this.tempUsers;
-            }
-          }
-        });
-      }
+    {
+      field: "sex",
+      label: "Sex"
+    },
+    {
+      field: "age",
+      label: "Age"
     }
+  ];
+  handlerPagination(current: number){
+    this.pagination.current = current;
+    this.searchUser(this.paramSearch);
   }
-});
+  searchUser(param: {}){
+    if(titanic.length == 0){
+      return;
+    }
+    let tempUsers: User[] = titanic;
+    Object.assign(this.paramSearch, param);
+    const isEmpty = Object.values(param).every(x => x === null || x === '');
+    if(!isEmpty){
+      tempUsers = titanic.filter((user: User) => {
+        let isMatch = false;
+        if(this.paramSearch.name){
+          isMatch = user.name.toLowerCase().includes(this.paramSearch.name.toLowerCase());
+        }
+        if(this.paramSearch.age > 0){
+          isMatch = this.paramSearch.name ? (isMatch && user.age == this.paramSearch.age) : user.age == this.paramSearch.age;
+        }
+        if(this.paramSearch.sex){
+          isMatch = (this.paramSearch.name || this.paramSearch.age > 0) ? (isMatch && user.sex == this.paramSearch.sex) : user.sex == this.paramSearch.sex;
+        }
+        if(isMatch){
+          return user;
+        }
+      });
+    }
+    this.pagination.total = tempUsers.length;
+    this.users = tempUsers.splice((this.pagination.current - 1) * this.pagination.perPage,  this.pagination.perPage * this.pagination.current);
+  }
+}
 </script>
