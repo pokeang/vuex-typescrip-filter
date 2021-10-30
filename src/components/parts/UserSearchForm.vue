@@ -22,10 +22,10 @@
 <script lang="ts">
 // import Vue from "vue";
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { SearchUser } from "@/model/SearchUser";
+import { UserDTO } from "@/model/DTO/UserDTO";
 @Component
 export default class UserSearchForm extends Vue {
-  param: SearchUser = {
+  param: UserDTO = {
     name: '',
     age: '',
     sex: ''

@@ -8,6 +8,6 @@ export interface Pagination {
     size: string,
     isSimple: boolean,
     isRounded: boolean,
-    prevIcon: "chevron-left",
-    nextIcon: "chevron-right"
+    prevIcon: string,
+    nextIcon: string
 }

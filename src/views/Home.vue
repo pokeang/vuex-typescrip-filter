@@ -27,7 +27,7 @@
 import titanic from "@/assets/titanic.json";
 import { User } from "../model/User";
 import { Pagination } from "../model/Pagination";
-import { SearchUser } from "../model/SearchUser";
+import { UserDTO } from "../model/DTO/UserDTO";
 import UserSearchForm from "@/components/parts/UserSearchForm.vue";
 import { Component, Vue } from "vue-property-decorator";
 
@@ -49,7 +49,7 @@ export default class Home extends Vue {
     prevIcon: "chevron-left",
     nextIcon: "chevron-right"
   };
-  paramSearch: SearchUser = {
+  userSearchParam: UserDTO = {
     name: "",
     age: "",
     sex: ""
@@ -70,26 +70,26 @@ export default class Home extends Vue {
   ];
   handlerPagination(current: number){
     this.pagination.current = current;
-    this.searchUser(this.paramSearch);
+    this.searchUser(this.userSearchParam);
   }
-  searchUser(param: {}){
+  searchUser(userSearchParam: UserDTO){
     if(titanic.length == 0){
       return;
     }
     let tempUsers: User[] = titanic;
-    Object.assign(this.paramSearch, param);
-    const isEmpty = Object.values(param).every(x => x === null || x === '');
+    this.userSearchParam = userSearchParam;
+    const isEmpty = Object.values(userSearchParam).every(x => x === null || x === '');
     if(!isEmpty){
       tempUsers = titanic.filter((user: User) => {
         let isMatch = false;
-        if(this.paramSearch.name){
-          isMatch = user.name.toLowerCase().includes(this.paramSearch.name.toLowerCase());
+        if(this.userSearchParam.name){
+          isMatch = user.name.toLowerCase().includes(this.userSearchParam.name.toLowerCase());
         }
-        if(this.paramSearch.age > 0){
-          isMatch = this.paramSearch.name ? (isMatch && user.age == this.paramSearch.age) : user.age == this.paramSearch.age;
+        if(this.userSearchParam.age > 0){
+          isMatch = this.userSearchParam.name ? (isMatch && user.age == this.userSearchParam.age) : user.age == this.userSearchParam.age;
         }
-        if(this.paramSearch.sex){
-          isMatch = (this.paramSearch.name || this.paramSearch.age > 0) ? (isMatch && user.sex == this.paramSearch.sex) : user.sex == this.paramSearch.sex;
+        if(this.userSearchParam.sex){
+          isMatch = (this.userSearchParam.name || this.userSearchParam.age > 0) ? (isMatch && user.sex == this.userSearchParam.sex) : user.sex == this.userSearchParam.sex;
         }
         if(isMatch){
           return user;
