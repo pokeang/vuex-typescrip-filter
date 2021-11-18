@@ -1,18 +1,51 @@
 <template>
   <div class="user-search-form">
-    Here is UserSearchForm
+    <section>
+      <div class="input-search">
+        <b-field label="Name" horizontal>
+          <b-input v-model="param.name"></b-input>
+        </b-field>
+        <b-field label="Age" horizontal>
+          <b-input v-model="param.age"></b-input>
+        </b-field>
+        <b-field label="Sex" horizontal>
+          <b-input v-model="param.sex"></b-input>
+        </b-field>
+      </div>
+      <div class="float-right">
+        <b-button @click="search">Search</b-button>
+      </div>
+    </section>
   </div>
 </template>
 
-<script>
-import Vue from "vue";
-
-export default Vue.extend({});
+<script lang="ts">
+// import Vue from "vue";
+import { Component, Vue, Prop } from "vue-property-decorator";
+import { UserDTO } from "@/model/DTO/UserDTO";
+@Component
+export default class UserSearchForm extends Vue {
+  param: UserDTO = {
+    name: '',
+    age: '',
+    sex: ''
+  }
+  search() {
+    this.$emit("search", this.param);
+  }
+};
 </script>
 
 <style scoped>
 .user-search-form {
-  height: 60px;
   background-color: yellow;
+  padding: 30px;
+}
+.input-search {
+  width: 90%;
+}
+.float-right {
+  float: right;
+  margin-top: -38px;
 }
 </style>
